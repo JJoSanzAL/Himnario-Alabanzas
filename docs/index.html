@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Himnario Alabanzas</title>
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            fetch('canciones.json')
+                .then(response => response.json())
+                .then(data => {
+                    const songsContainer = document.getElementById('songs');
+                    const searchInput = document.getElementById('search');
+
+                    function displaySongs(filteredSongs) {
+                        songsContainer.innerHTML = ''; // Limpiar contenido previo
+                        filteredSongs.forEach(song => {
+                            const songSection = document.createElement('section');
+                            songSection.className = 'song';
+                            songSection.innerHTML = `
+                                <h2 class="song-title">${song.numero}. ${song.titulo}</h2>
+                                <p>${song.letra.replace(/\n/g, '<br>')}</p>
+                            `;
+                            songsContainer.appendChild(songSection);
+                        });
+                    }
+
+                    displaySongs(data); // Mostrar todas las canciones inicialmente
+
+                    searchInput.addEventListener('input', function() {
+                        const searchTerm = searchInput.value.toLowerCase();
+                        const filteredSongs = data.filter(song =>
+                            song.titulo.toLowerCase().includes(searchTerm) ||
+                            song.letra.toLowerCase().includes(searchTerm) ||
+                            String(song.numero).includes(searchTerm)
+                        );
+                        displaySongs(filteredSongs); // Mostrar canciones filtradas
+                    });
+                });
+        });
+    </script>
+</head>
+<body>
+    <header>
+        <div class="search-container">
+            <h1>Letras de Alabanzas</h1>
+            <input type="text" id="search" placeholder="Buscar canción...">
+        </div>
+    </header>
+    <main id="songs">
+        <!-- Aquí se cargarán las canciones desde el archivo JSON -->
+    </main>
+</body>
+</html>
